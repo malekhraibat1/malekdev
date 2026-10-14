@@ -31,6 +31,9 @@ import { LoginView } from './components/LoginView.tsx';
 import { CctvSurveillanceView } from './components/CctvSurveillanceView.tsx';
 import { MultiAiFusionView } from './components/MultiAiFusionView.tsx';
 import { AppDesignerStudio } from './components/AppDesignerStudio.tsx';
+import { YouTubePlayerApp } from './components/apps/YouTubePlayerApp.tsx';
+import { PasswordVaultApp } from './components/apps/PasswordVaultApp.tsx';
+import { ResourceVaultView } from './components/ResourceVaultView.tsx';
 
 const STORAGE_KEY = 'malek_hraibat_code_vault_v1';
 
@@ -290,6 +293,24 @@ export default function App() {
           <CctvSurveillanceView
             onBackToComplex={() => setCurrentView('building')}
           />
+        )}
+
+        {/* Dedicated YouTube Studio Player Page (تشغيل اليوتيوب والبث المباشر) */}
+        {currentView === 'youtube' && (
+          <YouTubePlayerApp />
+        )}
+
+        {/* Dedicated Comprehensive Resource Vault (حفظ الأكواد والملفات والروابط والصور) */}
+        {currentView === 'vault-hub' && (
+          <ResourceVaultView
+            onSendToIde={handleSendCodeToIde}
+            onAskAiWithCode={handleAskAiWithCode}
+          />
+        )}
+
+        {/* Dedicated Passwords & Credentials Vault (حفظ الإيميلات وكلمات السر والمفاتيح) */}
+        {currentView === 'passwords' && (
+          <PasswordVaultApp />
         )}
 
         {/* Multi-AI Model Fusion Page (دمج نموذجين ذكاء أو أكثر) */}

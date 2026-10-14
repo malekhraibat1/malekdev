@@ -14,7 +14,9 @@ import {
   ChevronUp,
   BrainCircuit,
   FolderGit2,
-  Fingerprint
+  Fingerprint,
+  Tv,
+  KeyRound
 } from 'lucide-react';
 
 interface TaskbarProps {
@@ -62,6 +64,8 @@ export function Taskbar({
       case 'UserCheck': return <Fingerprint className={className} />;
       case 'BrainCircuit': return <BrainCircuit className={className} />;
       case 'FolderGit2': return <FolderGit2 className={className} />;
+      case 'Tv': return <Tv className={className} />;
+      case 'KeyRound': return <KeyRound className={className} />;
       default: return <Layers className={className} />;
     }
   };

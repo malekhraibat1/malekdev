@@ -8,7 +8,9 @@ export type AppId =
   | 'terminal' 
   | 'persona'
   | 'ai'
-  | 'vault';
+  | 'vault'
+  | 'youtube'
+  | 'passwords';
 
 export type AppStatus = 'active' | 'processing' | 'idle' | 'warning';
 

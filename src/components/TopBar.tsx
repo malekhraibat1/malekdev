@@ -1,7 +1,7 @@
-import { Volume2, VolumeX, Play, RotateCcw, Video, BrainCircuit, Layout, Building2, LogOut, UserCheck } from 'lucide-react';
+import { Volume2, VolumeX, Play, RotateCcw, Video, BrainCircuit, Layout, Building2, LogOut, UserCheck, Tv, FolderGit2, KeyRound } from 'lucide-react';
 import { sound } from '../utils/audio.ts';
 
-export type AppViewMode = 'circuit' | 'workspace' | 'matrix' | 'ai-suite' | 'building' | 'cctv' | 'ai-fusion' | 'designer';
+export type AppViewMode = 'circuit' | 'workspace' | 'matrix' | 'ai-suite' | 'building' | 'cctv' | 'ai-fusion' | 'designer' | 'youtube' | 'vault-hub' | 'passwords';
 
 interface TopBarProps {
   currentView: AppViewMode;
@@ -59,6 +59,70 @@ export function TopBar({
 
       {/* Zone 2: Navigation Links */}
       <nav className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-[55vw] lg:max-w-none">
+        {/* CCTV Surveillance Page */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('cctv');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'cctv'
+              ? 'bg-rose-500/25 text-rose-300 border border-rose-500/50 shadow-md shadow-rose-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <Video className="w-3.5 h-3.5 text-rose-400" />
+          <span>مراقبة الكاميرات (Hik / ICSee / Yoosee)</span>
+        </button>
+
+        {/* YouTube Studio Player */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('youtube');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'youtube'
+              ? 'bg-red-500/25 text-red-300 border border-red-500/50 shadow-md shadow-red-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <Tv className="w-3.5 h-3.5 text-red-400" />
+          <span>مشغل اليوتيوب (YouTube Live)</span>
+        </button>
+
+        {/* Comprehensive Resource Vault (Code, Files, Links, Images) */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('vault-hub');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'vault-hub'
+              ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 shadow-md shadow-emerald-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" />
+          <span>الأكواد والملفات والروابط والصور</span>
+        </button>
+
+        {/* Passwords & Credentials Vault */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('passwords');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'passwords'
+              ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-500/50 shadow-md shadow-cyan-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
+          <span>خزنة الإيميلات وكلمات السر</span>
+        </button>
+
         {/* 3D Campus */}
         <button
           onClick={() => {
@@ -73,22 +137,6 @@ export function TopBar({
         >
           <Building2 className="w-3.5 h-3.5 text-cyan-400" />
           <span>مجمّع البرمجيات 3D</span>
-        </button>
-
-        {/* CCTV Surveillance Page */}
-        <button
-          onClick={() => {
-            sound.playClick(700);
-            onViewChange('cctv');
-          }}
-          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
-            currentView === 'cctv'
-              ? 'bg-red-500/20 text-red-300 border border-red-500/40 shadow-sm font-bold'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
-          }`}
-        >
-          <Video className="w-3.5 h-3.5 text-red-400" />
-          <span>مراقبة الكاميرات (Hik / ICSee / Yoosee)</span>
         </button>
 
         {/* Multi-AI Fusion */}
@@ -120,7 +168,7 @@ export function TopBar({
           }`}
         >
           <Layout className="w-3.5 h-3.5 text-emerald-400" />
-          <span>استوديو تصميم البرامج والصفحات</span>
+          <span>استوديو التصميم</span>
         </button>
 
         {/* Circuit Board */}
@@ -166,8 +214,11 @@ export function TopBar({
             }}
             className="bg-slate-900 border border-slate-700 text-cyan-300 rounded-lg px-2 py-1 text-xs font-mono"
           >
-            <option value="building">🏢 مجمّع البرمجيات 3D</option>
             <option value="cctv">📹 مراقبة الكاميرات CCTV</option>
+            <option value="youtube">📺 مشغل اليوتيوب</option>
+            <option value="vault-hub">📁 الأكواد والملفات والروابط والصور</option>
+            <option value="passwords">🔐 خزنة الإيميلات وكلمات السر</option>
+            <option value="building">🏢 مجمّع البرمجيات 3D</option>
             <option value="ai-fusion">🧠 دمج نماذج الذكاء</option>
             <option value="designer">🎨 استوديو التصميم</option>
             <option value="circuit">⚡ لوحة الدوائر</option>

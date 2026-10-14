@@ -171,6 +171,40 @@ export const INITIAL_APP_NODES: AppNode[] = [
       { label: 'الأوامر', value: 'متاحة' },
     ],
   },
+  {
+    id: 'youtube',
+    name: 'مشغل اليوتيوب المباشر',
+    nameEn: 'YouTube Studio Live',
+    category: 'الوسائط والمراقبة',
+    description: 'تشغيل مقاطع اليوتيوب، بثوث الكاميرات الحية 4K، وشروحات الهندسة وموسيقى البرمجة.',
+    iconName: 'Tv',
+    x: 88,
+    y: 85,
+    status: 'active',
+    accentColor: '#ef4444', // red-500
+    connectedTo: ['telemetry'],
+    stats: [
+      { label: 'المشغل', value: 'Live 4K' },
+      { label: 'الحالة', value: 'Ready' },
+    ],
+  },
+  {
+    id: 'passwords',
+    name: 'خزنة الإيميلات وكلمات السر',
+    nameEn: 'Credentials & Passwords Vault',
+    category: 'الأمان والتشفير',
+    description: 'حفظ وتشفير حسابات Hik-Connect و ICSee و Yoosee والبريد والسيرفرات والمفاتيح.',
+    iconName: 'KeyRound',
+    x: 12,
+    y: 85,
+    status: 'active',
+    accentColor: '#06b6d4', // cyan-500
+    connectedTo: ['security'],
+    stats: [
+      { label: 'التشفير', value: 'AES-256' },
+      { label: 'الحماية', value: 'مفعلة' },
+    ],
+  },
 ];
 
 export const CIRCUIT_CONNECTIONS: CircuitConnection[] = [

@@ -100,8 +100,8 @@ export function CctvSurveillanceView({ onBackToComplex }: CctvSurveillanceViewPr
   const [isEnlargedMapOpen, setIsEnlargedMapOpen] = useState(false);
   const [activeAccountTab, setActiveAccountTab] = useState<'hik-connect' | 'icsee' | 'yoosee' | 'stream'>('hik-connect');
 
-  // Preview Mode: 'simulation' | 'video' | 'thermal'
-  const [previewRenderMode, setPreviewRenderMode] = useState<'simulation' | 'video' | 'thermal'>('simulation');
+  // Preview Mode: 'video' | 'simulation' | 'thermal' (defaults to real live video stream)
+  const [previewRenderMode, setPreviewRenderMode] = useState<'simulation' | 'video' | 'thermal'>('video');
 
   // Account login form states
   const [loginForm, setLoginForm] = useState({
@@ -2007,7 +2007,7 @@ function CameraLivePreviewRenderer({
           playsInline
           onLoadedData={() => setVideoLoaded(true)}
           onError={() => setVideoError(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 z-10 ${
             videoLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         />

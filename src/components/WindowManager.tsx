@@ -12,6 +12,8 @@ import { TerminalApp } from './apps/TerminalApp.tsx';
 import { PersonaApp } from './apps/PersonaApp.tsx';
 import { AiCopilotApp } from './apps/AiCopilotApp.tsx';
 import { CodeVaultApp } from './apps/CodeVaultApp.tsx';
+import { YouTubePlayerApp } from './apps/YouTubePlayerApp.tsx';
+import { PasswordVaultApp } from './apps/PasswordVaultApp.tsx';
 
 interface WindowManagerProps {
   windows: WindowState[];
@@ -201,6 +203,10 @@ export function WindowManager({
         return <TerminalApp onOpenApp={onOpenApp} onTriggerPulse={onTriggerPulse} />;
       case 'persona':
         return <PersonaApp onOpenApp={onOpenApp} onOpenSignature={onOpenSignature} />;
+      case 'youtube':
+        return <YouTubePlayerApp isEmbedded={true} />;
+      case 'passwords':
+        return <PasswordVaultApp isEmbedded={true} />;
       default:
         return null;
     }
