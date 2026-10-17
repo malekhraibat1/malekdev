@@ -16,7 +16,10 @@ import {
   FolderGit2,
   Fingerprint,
   Tv,
-  KeyRound
+  KeyRound,
+  Receipt,
+  CheckSquare,
+  Boxes
 } from 'lucide-react';
 
 interface TaskbarProps {
@@ -66,6 +69,9 @@ export function Taskbar({
       case 'FolderGit2': return <FolderGit2 className={className} />;
       case 'Tv': return <Tv className={className} />;
       case 'KeyRound': return <KeyRound className={className} />;
+      case 'Receipt': return <Receipt className={className} />;
+      case 'CheckSquare': return <CheckSquare className={className} />;
+      case 'Boxes': return <Boxes className={className} />;
       default: return <Layers className={className} />;
     }
   };

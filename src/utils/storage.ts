@@ -72,7 +72,7 @@ export interface DesignerProject {
 export interface AiFusionRecord {
   id: string;
   prompt: string;
-  selectedModels: ('chatgpt' | 'deepseek' | 'claude' | 'gemini')[];
+  selectedModels: string[];
   timestamp: string;
   masterSolution: string;
   modelOutputs: Record<string, string>;
@@ -91,6 +91,8 @@ const KEYS = {
   IMAGES: 'devcore_vault_images_v1',
   CREDENTIALS: 'devcore_credentials_vault_v1',
   YOUTUBE: 'devcore_youtube_history_v1',
+  DEBTS: 'devcore_debts_ledger_v1',
+  TASKS: 'devcore_tasks_notebook_v1',
 };
 
 // --- AUTH STORAGE ---
@@ -825,4 +827,312 @@ export function saveStoredYouTubeHistory(history: string[]): void {
     console.error('Failed to save YouTube history:', e);
   }
 }
+
+// --- DEBT LEDGER (دفتر الديون والذمم المالية) ---
+export interface DebtPayment {
+  id: string;
+  date: string;
+  amount: number;
+  method: 'نقداً' | 'تحويل بنكي' | 'شيك' | 'بطاقة دفع';
+  receiptNumber?: string;
+  note?: string;
+}
+
+export type DebtType = 'debt_to_us' | 'debt_from_us'; // debt_to_us: دين لنا (مستحقات على عميل) | debt_from_us: دين علينا (مستحقات لمورد/فني)
+export type DebtCategory = 'كاميرات ومراقبة' | 'صيانة وشبكات' | 'توريدات ومشتريات' | 'استشارات برمجية' | 'عام وشخصي';
+export type DebtCurrency = 'ILS' | 'USD' | 'JOD' | 'SAR' | 'EUR';
+export type DebtStatus = 'active' | 'partially_paid' | 'paid' | 'overdue';
+
+export interface DebtEntry {
+  id: string;
+  personName: string;
+  phone: string;
+  type: DebtType;
+  category: DebtCategory;
+  totalAmount: number;
+  currency: DebtCurrency;
+  startDate: string;
+  dueDate: string;
+  status: DebtStatus;
+  notes?: string;
+  invoiceRef?: string;
+  payments: DebtPayment[];
+  lastUpdated: string;
+}
+
+export const DEFAULT_DEBTS: DebtEntry[] = [
+  {
+    id: 'debt-01',
+    personName: 'شركة الأفق للمقاولات العامة (م. رامي الشيخ)',
+    phone: '+970 599 123456',
+    type: 'debt_to_us',
+    category: 'كاميرات ومراقبة',
+    totalAmount: 4800,
+    currency: 'ILS',
+    startDate: '2026-03-10',
+    dueDate: '2026-04-15',
+    status: 'partially_paid',
+    notes: 'توريد وتركيب 12 كاميرا Hikvision بدقة 4K مع NVR 16 قناة وشاشة مراقبة مركزية.',
+    invoiceRef: 'INV-2026-089',
+    payments: [
+      {
+        id: 'pay-01',
+        date: '2026-03-10',
+        amount: 2000,
+        method: 'شيك',
+        receiptNumber: 'REC-5501',
+        note: 'دفعة أولى عند بدء التوريد والتركيب',
+      },
+    ],
+    lastUpdated: '2026-03-10',
+  },
+  {
+    id: 'debt-02',
+    personName: 'مؤسسة القدس التجارية (الحاج أبو ناصر)',
+    phone: '+970 568 789012',
+    type: 'debt_to_us',
+    category: 'صيانة وشبكات',
+    totalAmount: 1850,
+    currency: 'ILS',
+    startDate: '2026-02-18',
+    dueDate: '2026-03-20',
+    status: 'overdue',
+    notes: 'صيانة شبكة الألياف الضوئية وإعادة برمجة خوادم التخزين السحابي ICSee.',
+    invoiceRef: 'INV-2026-042',
+    payments: [],
+    lastUpdated: '2026-02-18',
+  },
+  {
+    id: 'debt-03',
+    personName: 'شركة تكنو-ستور لتوريد كابلات ومحولات Hikvision',
+    phone: '+970 598 445566',
+    type: 'debt_from_us',
+    category: 'توريدات ومشتريات',
+    totalAmount: 3200,
+    currency: 'ILS',
+    startDate: '2026-03-01',
+    dueDate: '2026-04-01',
+    status: 'partially_paid',
+    notes: 'شراء بكرات كابلات Cat6 مع سويتشات PoE ومحولات طاقة صناعية.',
+    invoiceRef: 'PO-HIK-992',
+    payments: [
+      {
+        id: 'pay-02',
+        date: '2026-03-05',
+        amount: 1500,
+        method: 'تحويل بنكي',
+        receiptNumber: 'BNK-7712',
+        note: 'سداد نصف الفاتورة تحويل فوري',
+      },
+    ],
+    lastUpdated: '2026-03-05',
+  },
+  {
+    id: 'debt-04',
+    personName: 'مجمع الأندلس الطبي (د. وسيم كنعان)',
+    phone: '+972 54 8899001',
+    type: 'debt_to_us',
+    category: 'استشارات برمجية',
+    totalAmount: 1200,
+    currency: 'USD',
+    startDate: '2026-01-15',
+    dueDate: '2026-02-28',
+    status: 'paid',
+    notes: 'ربط نظام كاميرات المراقبة بالبصمة البيومترية وبوابة الدخول الذكية.',
+    invoiceRef: 'INV-2026-011',
+    payments: [
+      {
+        id: 'pay-03',
+        date: '2026-01-15',
+        amount: 600,
+        method: 'تحويل بنكي',
+        receiptNumber: 'BNK-102',
+        note: 'دفعة مقدمة 50%',
+      },
+      {
+        id: 'pay-04',
+        date: '2026-02-25',
+        amount: 600,
+        method: 'تحويل بنكي',
+        receiptNumber: 'BNK-188',
+        note: 'سداد كامل المستحقات بعد التسليم والتشغيل',
+      },
+    ],
+    lastUpdated: '2026-02-25',
+  },
+];
+
+export function getStoredDebts(): DebtEntry[] {
+  try {
+    const raw = localStorage.getItem(KEYS.DEBTS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return DEFAULT_DEBTS;
+}
+
+export function saveStoredDebts(debts: DebtEntry[]): void {
+  try {
+    localStorage.setItem(KEYS.DEBTS, JSON.stringify(debts));
+  } catch (e) {
+    console.error('Failed to save debts ledger:', e);
+  }
+}
+
+// --- TASKS NOTEBOOK (دفتر المهمات والمشاريع) ---
+export interface TaskSubitem {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+export type TaskPriority = 'urgent' | 'high' | 'medium' | 'low';
+export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done';
+export type TaskCategory = 'هندسة وبرمجة' | 'كاميرات وشبكات' | 'متابعات مالية وديون' | 'صيانة ميدانية' | 'مواعيد واجتماعات' | 'عام';
+
+export interface TaskEntry {
+  id: string;
+  title: string;
+  description: string;
+  category: TaskCategory;
+  priority: TaskPriority;
+  status: TaskStatus;
+  dueDate: string;
+  createdAt: string;
+  completedAt?: string;
+  subtasks: TaskSubitem[];
+  tags: string[];
+  estimatedHours?: number;
+  assignedTo?: string;
+}
+
+export const DEFAULT_TASKS: TaskEntry[] = [
+  {
+    id: 'task-01',
+    title: 'فحص وضبط كاميرات Hik-Connect في مركز السيرفرات',
+    description: 'معايرة زوايا الرؤية، تفعيل كشف الحركة بالأشعة تحت الحمراء، وفحص جودة البث المباشر بدقة 4K.',
+    category: 'كاميرات وشبكات',
+    priority: 'urgent',
+    status: 'in_progress',
+    dueDate: '2026-04-18',
+    createdAt: '2026-04-12',
+    subtasks: [
+      { id: 'sub-1', title: 'فحص كابل الشبكة PoE وسرعة التوصيل 1Gbps', completed: true },
+      { id: 'sub-2', title: 'تحديث البرنامج الثابت Firmware للكاميرا الرئيسية', completed: true },
+      { id: 'sub-3', title: 'اختبار دفق RTSP وتفعيل النسخ الاحتياطي السحابي', completed: false },
+      { id: 'sub-4', title: 'توثيق إحداثيات الموقع على الخريطة التفاعلية', completed: false },
+    ],
+    tags: ['CCTV', 'Hikvision', 'صيانة', 'شبكات'],
+    estimatedHours: 3,
+    assignedTo: 'المهندس مالك حريبات',
+  },
+  {
+    id: 'task-02',
+    title: 'متابعة تحصيل دفعة شركة الأفق للمقاولات (2,800 شيكل)',
+    description: 'الاتصال بالمدير المالي لشركة الأفق لتأكيد استلام شهادة الإنجاز وجدولة صرف شيك الدفعة الختامية.',
+    category: 'متابعات مالية وديون',
+    priority: 'high',
+    status: 'todo',
+    dueDate: '2026-04-15',
+    createdAt: '2026-04-10',
+    subtasks: [
+      { id: 'sub-5', title: 'إرسال كشف الحساب الرسمي المعتمد عبر واتساب', completed: true },
+      { id: 'sub-6', title: 'تنسيق موعد تسليم إيصال القبض الرسمي', completed: false },
+    ],
+    tags: ['ديون', 'تحصيل', 'شركة الأفق'],
+    estimatedHours: 1,
+    assignedTo: 'المكتب المالي',
+  },
+  {
+    id: 'task-03',
+    title: 'تطوير وتدقيق محرك تكامل الذكاء الاصطناعي مع ميزة الاستئناف الفوري',
+    description: 'دمج نماذج ChatGPT و DeepSeek و Claude و Gemini مع إمكانية تسليم العمل التلقائي للنموذج البديل عند التوقف.',
+    category: 'هندسة وبرمجة',
+    priority: 'urgent',
+    status: 'in_progress',
+    dueDate: '2026-04-16',
+    createdAt: '2026-04-14',
+    subtasks: [
+      { id: 'sub-7', title: 'بناء واجهة تسليم الشعلة (Handover Relay)', completed: true },
+      { id: 'sub-8', title: 'برمجة خوارزمية الاستئناف بدون تكرار الكود', completed: true },
+      { id: 'sub-9', title: 'اختبار محاكاة انقطاع الاتصال والتعافي الفوري', completed: false },
+    ],
+    tags: ['AI-Engine', 'Multi-AI', 'Failover', 'Architecture'],
+    estimatedHours: 4,
+    assignedTo: 'المهندس مالك حريبات',
+  },
+  {
+    id: 'task-04',
+    title: 'تجهيز نسخ احتياطية لخزنة الأكواد والمفاتيح السرية',
+    description: 'تصدير ملف JSON المشفر لجميع مفاتيح الكاميرات، حسابات P2P، وبيانات الاعتماد لحفظها على وحدة آمنة.',
+    category: 'هندسة وبرمجة',
+    priority: 'medium',
+    status: 'review',
+    dueDate: '2026-04-20',
+    createdAt: '2026-04-13',
+    subtasks: [
+      { id: 'sub-10', title: 'تشفير ملف النسخة بنظام AES-256', completed: true },
+      { id: 'sub-11', title: 'حفظ نسخة في التخزين البارد الآمن', completed: true },
+    ],
+    tags: ['أمان', 'نسخ احتياطي', 'خزنة'],
+    estimatedHours: 2,
+    assignedTo: 'فريق الأمن السيبراني',
+  },
+  {
+    id: 'task-05',
+    title: 'سداد دفعة شركة تكنو-ستور لشراء كابلات Cat6 (1,700 شيكل)',
+    description: 'سداد المبلغ المتبقي لشركة تكنو-ستور عبر تحويل بنكي فوري وإرفاق الإشعار بالسجل.',
+    category: 'متابعات مالية وديون',
+    priority: 'medium',
+    status: 'todo',
+    dueDate: '2026-04-25',
+    createdAt: '2026-04-14',
+    subtasks: [
+      { id: 'sub-12', title: 'التحقق من الرصيد البنكي', completed: false },
+      { id: 'sub-13', title: 'تنفيذ التحويل وتوثيق رقم الحركة', completed: false },
+    ],
+    tags: ['دائنون', 'مشتريات', 'بنك'],
+    estimatedHours: 1,
+  },
+  {
+    id: 'task-06',
+    title: 'استكمال تشغيل شاشات اليوتيوب في غرفة العمليات',
+    description: 'اختبار دفق القنوات التعليمية وبث الكاميرات الحية العالمية على شاشات المراقبة الجدارية.',
+    category: 'كاميرات وشبكات',
+    priority: 'low',
+    status: 'done',
+    dueDate: '2026-04-14',
+    createdAt: '2026-04-09',
+    completedAt: '2026-04-14',
+    subtasks: [
+      { id: 'sub-14', title: 'إعداد قوائم التشغيل الهندسية المفضلة', completed: true },
+      { id: 'sub-15', title: 'ضبط وضع ملء الشاشة والشاشات العائمة', completed: true },
+    ],
+    tags: ['YouTube', 'غرفة العمليات'],
+    estimatedHours: 2,
+    assignedTo: 'المهندس مالك حريبات',
+  },
+];
+
+export function getStoredTasks(): TaskEntry[] {
+  try {
+    const raw = localStorage.getItem(KEYS.TASKS);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return DEFAULT_TASKS;
+}
+
+export function saveStoredTasks(tasks: TaskEntry[]): void {
+  try {
+    localStorage.setItem(KEYS.TASKS, JSON.stringify(tasks));
+  } catch (e) {
+    console.error('Failed to save tasks notebook:', e);
+  }
+}
+
 

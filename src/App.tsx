@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   AppId, 
   WindowState, 
@@ -34,6 +34,13 @@ import { AppDesignerStudio } from './components/AppDesignerStudio.tsx';
 import { YouTubePlayerApp } from './components/apps/YouTubePlayerApp.tsx';
 import { PasswordVaultApp } from './components/apps/PasswordVaultApp.tsx';
 import { ResourceVaultView } from './components/ResourceVaultView.tsx';
+import { DebtBookApp } from './components/apps/DebtBookApp.tsx';
+import { TasksBookApp } from './components/apps/TasksBookApp.tsx';
+import { AppStudioModifierApp } from './components/apps/AppStudioModifierApp.tsx';
+import { MalekOSInstallerApp } from './components/apps/MalekOSInstallerApp.tsx';
+import { CommandPalette } from './components/CommandPalette.tsx';
+import { BackupRestoreModal } from './components/BackupRestoreModal.tsx';
+import { DevCoreFloatingAssistant } from './components/DevCoreFloatingAssistant.tsx';
 
 const STORAGE_KEY = 'malek_hraibat_code_vault_v1';
 
@@ -51,6 +58,21 @@ export default function App() {
   const [isSignatureOpen, setIsSignatureOpen] = useState(false);
   const [radarVisible, setRadarVisible] = useState(true);
   const [ideCodeToLoad, setIdeCodeToLoad] = useState<{ code: string; filename: string } | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isBackupRestoreOpen, setIsBackupRestoreOpen] = useState(false);
+
+  // Universal Omnibar Shortcut (Ctrl+K or Cmd+K)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        sound.playClick(600);
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   // Window states (Persona and AI available)
   const [windows, setWindows] = useState<WindowState[]>([
@@ -271,10 +293,24 @@ export default function App() {
         onToggleRadar={() => setRadarVisible(!radarVisible)}
         username={authState.username || 'Malek'}
         onLogout={handleLogout}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenBackupRestore={() => setIsBackupRestoreOpen(true)}
       />
 
       {/* Main Viewport Container */}
       <div className="relative flex-1 w-full overflow-hidden">
+        {/* Dedicated Windows EXE Installer & Packager Hub (مركز تثبيت النظام وتوليد EXE المتكامل) */}
+        {currentView === 'installer' && (
+          <MalekOSInstallerApp />
+        )}
+
+        {/* Dedicated App Engineering & Modifier Studio (استوديو برمجة وتعديل التطبيقات) */}
+        {currentView === 'app-studio' && (
+          <AppStudioModifierApp
+            onSendToIde={handleSendCodeToIde}
+            onSaveToVault={handleSaveSnippetToVault}
+          />
+        )}
         {/* Layer 1: Electronic Circuit Board */}
         {currentView === 'circuit' && (
           <CircuitBoard
@@ -311,6 +347,16 @@ export default function App() {
         {/* Dedicated Passwords & Credentials Vault (حفظ الإيميلات وكلمات السر والمفاتيح) */}
         {currentView === 'passwords' && (
           <PasswordVaultApp />
+        )}
+
+        {/* Dedicated Debt Ledger Page (دفتر الديون والذمم المالية) */}
+        {currentView === 'debts' && (
+          <DebtBookApp />
+        )}
+
+        {/* Dedicated Tasks & Projects Notebook Page (دفتر المهمات والمشاريع) */}
+        {currentView === 'tasks' && (
+          <TasksBookApp />
         )}
 
         {/* Multi-AI Model Fusion Page (دمج نموذجين ذكاء أو أكثر) */}
@@ -430,6 +476,27 @@ export default function App() {
           onStressSpike={handleStressTrigger}
         />
       )}
+
+      {/* Universal Omnibar / Command Palette (Ctrl+K) */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(v) => setCurrentView(v)}
+        onOpenApp={handleOpenApp}
+      />
+
+      {/* Full System Backup & Restore Modal */}
+      <BackupRestoreModal
+        isOpen={isBackupRestoreOpen}
+        onClose={() => setIsBackupRestoreOpen(false)}
+      />
+
+      {/* DevCore Floating Architect Assistant */}
+      <DevCoreFloatingAssistant
+        onOpenAppStudio={() => setCurrentView('app-studio')}
+        onOpenDebts={() => setCurrentView('debts')}
+        onOpenTasks={() => setCurrentView('tasks')}
+      />
     </div>
   );
 }

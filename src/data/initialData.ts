@@ -205,6 +205,74 @@ export const INITIAL_APP_NODES: AppNode[] = [
       { label: 'الحماية', value: 'مفعلة' },
     ],
   },
+  {
+    id: 'debts',
+    name: 'دفتر الديون والذمم المالية',
+    nameEn: 'Debts & Accounts Ledger',
+    category: 'المالية والحسابات',
+    description: 'إدارة ديون الزبائن والموردين، تسجيل دفعات السداد، طباعة كشوفات الحساب وتنبيهات الواتساب.',
+    iconName: 'Receipt',
+    x: 35,
+    y: 88,
+    status: 'active',
+    accentColor: '#10b981', // emerald-500
+    connectedTo: ['database'],
+    stats: [
+      { label: 'الدفتر', value: 'محاسبي' },
+      { label: 'السدادات', value: 'متابعة' },
+    ],
+  },
+  {
+    id: 'tasks',
+    name: 'دفتر المهمات والمشاريع',
+    nameEn: 'Tasks & Projects Notebook',
+    category: 'الإنتاجية وإدارة المشاريع',
+    description: 'متابعة مهام الكاميرات والبرمجة والصيانة، قوائم المهام الفرعية، ولوحة كانبان مع مؤشرات الإنجاز.',
+    iconName: 'CheckSquare',
+    x: 65,
+    y: 88,
+    status: 'active',
+    accentColor: '#f59e0b', // amber-500
+    connectedTo: ['pipeline'],
+    stats: [
+      { label: 'المهام', value: 'نشطة' },
+      { label: 'الإنجاز', value: 'تلقائي' },
+    ],
+  },
+  {
+    id: 'app-studio',
+    name: 'استوديو برمجة وتعديل التطبيقات',
+    nameEn: 'App Engineering & Modifier Studio',
+    category: 'البرمجة والتطوير السحابي',
+    description: 'بيئة تطوير ومعاينة حية وتعديل فوري للتطبيقات بالذكاء الاصطناعي مع فحص الإجماع للمهندس مالك حريبات.',
+    iconName: 'Boxes',
+    x: 50,
+    y: 12,
+    status: 'active',
+    accentColor: '#38bdf8', // sky-400
+    connectedTo: ['ide', 'ai'],
+    stats: [
+      { label: 'المعاينة', value: 'حية 60fps' },
+      { label: 'المطابقة', value: '100% Consensus' },
+    ],
+  },
+  {
+    id: 'installer',
+    name: 'مركز تثبيت النظام وتوليد EXE المتكامل',
+    nameEn: 'MalekOS Windows EXE Installer Hub',
+    category: 'التوزيع والتثبيت التنفيذي',
+    description: 'تثبيت وحزم منظومة المهندس مالك حريبات بنقرة واحدة، وتوليد ملف EXE متكامل لويندوز مع سكريبت Inno Setup واختصارات سطح المكتب.',
+    iconName: 'HardDrive',
+    x: 82,
+    y: 85,
+    status: 'active',
+    accentColor: '#10b981', // emerald-500
+    connectedTo: ['persona', 'app-studio'],
+    stats: [
+      { label: 'الحزمة', value: 'Windows x64' },
+      { label: 'الملف', value: 'EXE Direct' },
+    ],
+  },
 ];
 
 export const CIRCUIT_CONNECTIONS: CircuitConnection[] = [

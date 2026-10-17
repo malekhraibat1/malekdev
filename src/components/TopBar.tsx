@@ -1,7 +1,22 @@
-import { Volume2, VolumeX, Play, RotateCcw, Video, BrainCircuit, Layout, Building2, LogOut, UserCheck, Tv, FolderGit2, KeyRound } from 'lucide-react';
+import { Volume2, VolumeX, Play, RotateCcw, Video, BrainCircuit, Layout, Building2, LogOut, UserCheck, Tv, FolderGit2, KeyRound, Receipt, CheckSquare, Boxes, Search, Database, HardDrive, Download } from 'lucide-react';
 import { sound } from '../utils/audio.ts';
 
-export type AppViewMode = 'circuit' | 'workspace' | 'matrix' | 'ai-suite' | 'building' | 'cctv' | 'ai-fusion' | 'designer' | 'youtube' | 'vault-hub' | 'passwords';
+export type AppViewMode = 
+  | 'circuit' 
+  | 'workspace' 
+  | 'matrix' 
+  | 'ai-suite' 
+  | 'building' 
+  | 'cctv' 
+  | 'ai-fusion' 
+  | 'designer' 
+  | 'youtube' 
+  | 'vault-hub' 
+  | 'passwords'
+  | 'debts'
+  | 'tasks'
+  | 'app-studio'
+  | 'installer';
 
 interface TopBarProps {
   currentView: AppViewMode;
@@ -16,6 +31,8 @@ interface TopBarProps {
   onToggleRadar?: () => void;
   username?: string;
   onLogout?: () => void;
+  onOpenCommandPalette?: () => void;
+  onOpenBackupRestore?: () => void;
 }
 
 export function TopBar({
@@ -31,6 +48,8 @@ export function TopBar({
   onToggleRadar,
   username = 'Malek',
   onLogout,
+  onOpenCommandPalette,
+  onOpenBackupRestore,
 }: TopBarProps) {
   return (
     <header className="h-16 border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-md px-3 sm:px-5 flex items-center justify-between gap-4 shrink-0 z-30 select-none" dir="rtl">
@@ -59,6 +78,40 @@ export function TopBar({
 
       {/* Zone 2: Navigation Links */}
       <nav className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-[55vw] lg:max-w-none">
+        {/* Windows EXE Installer Hub (تثبيت النظام EXE) */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('installer');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'installer'
+              ? 'bg-gradient-to-r from-emerald-600/40 via-teal-600/40 to-cyan-600/40 text-emerald-300 border border-emerald-400/60 shadow-lg shadow-emerald-500/25 font-bold'
+              : 'text-emerald-400 hover:text-emerald-200 hover:bg-emerald-950/40 border border-emerald-500/40 shadow-sm shadow-emerald-500/10'
+          }`}
+        >
+          <HardDrive className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <span className="font-extrabold text-white">تثبيت النظام (EXE)</span>
+          <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 font-mono">Setup</span>
+        </button>
+
+        {/* App Engineering & Modifier Studio (برمجة وتعديل التطبيقات) */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('app-studio');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'app-studio'
+              ? 'bg-gradient-to-r from-cyan-600/30 to-blue-600/30 text-cyan-300 border border-cyan-400/50 shadow-md shadow-cyan-500/20 font-bold'
+              : 'text-slate-300 hover:text-white hover:bg-slate-900/60 border border-slate-800'
+          }`}
+        >
+          <Boxes className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="font-bold">استوديو برمجة وتعديل التطبيقات</span>
+          <span className="text-[9px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono hidden xl:inline">DevCore</span>
+        </button>
+
         {/* CCTV Surveillance Page */}
         <button
           onClick={() => {
@@ -121,6 +174,38 @@ export function TopBar({
         >
           <KeyRound className="w-3.5 h-3.5 text-cyan-400" />
           <span>خزنة الإيميلات وكلمات السر</span>
+        </button>
+
+        {/* Debt Ledger (دفتر الديون والذمم المالية) */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('debts');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'debts'
+              ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 shadow-md shadow-emerald-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <Receipt className="w-3.5 h-3.5 text-emerald-400" />
+          <span>دفتر الديون والذمم</span>
+        </button>
+
+        {/* Tasks Notebook (دفتر المهمات والمشاريع) */}
+        <button
+          onClick={() => {
+            sound.playClick(700);
+            onViewChange('tasks');
+          }}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 shrink-0 ${
+            currentView === 'tasks'
+              ? 'bg-amber-500/25 text-amber-300 border border-amber-500/50 shadow-md shadow-amber-500/20 font-bold'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
+          }`}
+        >
+          <CheckSquare className="w-3.5 h-3.5 text-amber-400" />
+          <span>دفتر المهمات والمشاريع</span>
         </button>
 
         {/* 3D Campus */}
@@ -214,17 +299,51 @@ export function TopBar({
             }}
             className="bg-slate-900 border border-slate-700 text-cyan-300 rounded-lg px-2 py-1 text-xs font-mono"
           >
+            <option value="app-studio">🛠️ استوديو برمجة وتعديل التطبيقات</option>
             <option value="cctv">📹 مراقبة الكاميرات CCTV</option>
             <option value="youtube">📺 مشغل اليوتيوب</option>
             <option value="vault-hub">📁 الأكواد والملفات والروابط والصور</option>
             <option value="passwords">🔐 خزنة الإيميلات وكلمات السر</option>
+            <option value="debts">🧾 دفتر الديون والذمم</option>
+            <option value="tasks">📋 دفتر المهمات والمشاريع</option>
             <option value="building">🏢 مجمّع البرمجيات 3D</option>
-            <option value="ai-fusion">🧠 دمج نماذج الذكاء</option>
+            <option value="ai-fusion">🧠 دمج واستئناف الذكاء</option>
             <option value="designer">🎨 استوديو التصميم</option>
             <option value="circuit">⚡ لوحة الدوائر</option>
             <option value="workspace">💻 سطح المكتب</option>
           </select>
         </div>
+
+        {/* Global Omnibar / Command Palette (Ctrl+K) */}
+        {onOpenCommandPalette && (
+          <button
+            onClick={() => {
+              sound.playClick(600);
+              onOpenCommandPalette();
+            }}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-mono transition-all shadow-sm active:scale-95"
+            title="البحث الشامل في المنظومة (Ctrl + K)"
+          >
+            <Search className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden md:inline font-sans">بحث شامل</span>
+            <span className="text-[10px] bg-slate-800 px-1 py-0.2 rounded text-slate-400 border border-slate-700 hidden lg:inline">Ctrl+K</span>
+          </button>
+        )}
+
+        {/* Full Backup & Restore */}
+        {onOpenBackupRestore && (
+          <button
+            onClick={() => {
+              sound.playClick(600);
+              onOpenBackupRestore();
+            }}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-700/80 text-xs font-mono transition-all shadow-sm active:scale-95"
+            title="النسخ الاحتياطي والاستعادة لجميع البيانات"
+          >
+            <Database className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden xl:inline font-sans">نسخ احتياطي</span>
+          </button>
+        )}
 
         {onToggleRadar && (
           <button

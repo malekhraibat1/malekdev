@@ -14,6 +14,10 @@ import { AiCopilotApp } from './apps/AiCopilotApp.tsx';
 import { CodeVaultApp } from './apps/CodeVaultApp.tsx';
 import { YouTubePlayerApp } from './apps/YouTubePlayerApp.tsx';
 import { PasswordVaultApp } from './apps/PasswordVaultApp.tsx';
+import { DebtBookApp } from './apps/DebtBookApp.tsx';
+import { TasksBookApp } from './apps/TasksBookApp.tsx';
+import { AppStudioModifierApp } from './apps/AppStudioModifierApp.tsx';
+import { MalekOSInstallerApp } from './apps/MalekOSInstallerApp.tsx';
 
 interface WindowManagerProps {
   windows: WindowState[];
@@ -207,6 +211,14 @@ export function WindowManager({
         return <YouTubePlayerApp isEmbedded={true} />;
       case 'passwords':
         return <PasswordVaultApp isEmbedded={true} />;
+      case 'debts':
+        return <DebtBookApp isEmbedded={true} />;
+      case 'tasks':
+        return <TasksBookApp isEmbedded={true} />;
+      case 'app-studio':
+        return <AppStudioModifierApp isEmbedded={true} onSendToIde={onSendCodeToIde} onSaveToVault={onSaveSnippetToVault} />;
+      case 'installer':
+        return <MalekOSInstallerApp isEmbedded={true} />;
       default:
         return null;
     }

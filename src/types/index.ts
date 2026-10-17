@@ -10,7 +10,11 @@ export type AppId =
   | 'ai'
   | 'vault'
   | 'youtube'
-  | 'passwords';
+  | 'passwords'
+  | 'debts'
+  | 'tasks'
+  | 'app-studio'
+  | 'installer';
 
 export type AppStatus = 'active' | 'processing' | 'idle' | 'warning';
 
